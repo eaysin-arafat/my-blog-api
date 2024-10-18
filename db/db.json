@@ -1,0 +1,46 @@
+{
+  "users": [],
+  "articles": [
+    {
+      "id": 1,
+      "title": "Articles 01",
+      "status": "published",
+      "createdAt": "",
+      "updatedAt": "",
+      "author": {
+        "id": 1
+      }
+    },
+    {
+      "id": 2,
+      "title": "Articles 01",
+      "status": "published",
+      "createdAt": "",
+      "updatedAt": "",
+      "author": {
+        "id": 1
+      }
+    },
+    {
+      "id": 3,
+      "title": "Articles 01",
+      "status": "published",
+      "createdAt": "",
+      "updatedAt": "",
+      "author": {
+        "id": 1
+      }
+    },
+    {
+      "id": 4,
+      "title": "Articles 01",
+      "status": "published",
+      "createdAt": "",
+      "updatedAt": "",
+      "author": {
+        "id": 1
+      }
+    }
+  ],
+  "comments": []
+}
