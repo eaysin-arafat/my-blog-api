@@ -141,6 +141,7 @@ paths:
         - $ref: "#/components/parameters/pageParam"
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/sortTypeParam"
+        - $ref: "#/components/parameters/sortByParam"
         - $ref: "#/components/parameters/searchParam"
       responses:
         "200":
@@ -649,7 +650,7 @@ components:
       schema:
         type: integer
         format: int32
-        example: 2
+        example: 1
     limitParam:
       in: query
       name: limit
@@ -657,7 +658,7 @@ components:
       schema:
         type: integer
         format: int32
-        example: 10
+        example: 5
     sortTypeParam:
       in: query
       name: sort_type
@@ -679,7 +680,7 @@ components:
       description: Search term
       schema:
         type: string
-        example: title
+        example: ""
     idPathParam:
       in: path
       name: id

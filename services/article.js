@@ -1,14 +1,8 @@
 const Article = require("../models/Article");
+const databaseConnection = require("../db");
 
-const findArticles = async ({
-  page = 1,
-  limit = 5,
-  sortType = "asc",
-  sortBy = "updatedAt",
-  searchTerm = "",
-}) => {
-  const articleInstance = new Article();
-  await articleInstance.init();
+const findArticles = async ({ page, limit, sortType, sortBy, searchTerm }) => {
+  const articleInstance = new Article(databaseConnection.db.articles);
   let articles;
 
   // filter based on search term
@@ -19,6 +13,7 @@ const findArticles = async ({
   }
 
   // sorting
+  articles = [...articles];
   articles = await articleInstance.sort(articles, sortType, sortBy);
 
   //pagination
@@ -50,7 +45,24 @@ const transformArticles = ({ articles = [] }) => {
   });
 };
 
+const createArticle = async ({
+  title,
+  body,
+  authorId,
+  cover = "",
+  status = "draft",
+}) => {
+  const articleInstance = new Article(databaseConnection.db.articles);
+  const article = await articleInstance.create(
+    { title, body, authorId, cover, status },
+    databaseConnection
+  );
+
+  return article;
+};
+
 module.exports = {
   findArticles,
   transformArticles,
+  createArticle,
 };

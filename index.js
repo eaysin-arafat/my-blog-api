@@ -5,6 +5,7 @@ const YAML = require("yamljs");
 const swaggerDoc = YAML.load("./swagger.yaml");
 const OpenApiValidator = require("express-openapi-validator");
 
+const databaseConnection = require("./db");
 const articleService = require("./services/article");
 
 // express app
@@ -17,21 +18,34 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  req.user = {
+    id: 999,
+    name: "Eaysin",
+  };
+  next();
+});
+
 app.get("/health", (_req, res) => {
   res.status(200).json({ health: "OK" });
 });
 
 app.get("/api/v1/articles", async (req, res) => {
   // 1. extract query params
-  const page = +req.query.page;
+  const page = +req.query.page || 1;
   const limit = +req.query.limit || 10;
+  const sortType = req.query.sort_type || "dsc";
+  const sortBy = req.query.sort_by || "updatedAt";
+  const searchTerm = req.query.search || "";
 
   // 2. call article service to fetch all articles
   let { articles, totalItems, totalPage, hasNext, hasPrev } =
     await articleService.findArticles({
-      ...req.query,
       page,
       limit,
+      sortType,
+      sortBy,
+      searchTerm,
     });
 
   // 3. generate necessary response
@@ -50,19 +64,42 @@ app.get("/api/v1/articles", async (req, res) => {
 
   if (hasPrev) {
     response.pagination.prev = page - 1;
-    response.links.prev = `/articles?page=${page - 1}&limit=${limit}`;
+    response.links.prev = `${req.url}?page=${page - 1}&limit=${limit}`;
   }
 
   if (hasNext) {
     response.pagination.prev = page + 1;
-    response.links.prev = `/articles?page=${page + 1}&limit=${limit}`;
+    response.links.prev = `${req.url}?page=${page + 1}&limit=${limit}`;
   }
 
   res.status(200).json(response);
 });
 
-app.post("/api/v1/articles", (req, res) => {
-  res.status(200).json({ path: "/articles", method: "get" });
+app.post("/api/v1/articles", async (req, res) => {
+  // step 01: destructure the request body
+  const { title, body, status, cover } = req.body;
+
+  // step 02: invoke the service function
+  const article = await articleService.createArticle({
+    title,
+    body,
+    status,
+    cover,
+    authorId: req.user.id,
+  });
+
+  // step 03: generate response
+  const response = {
+    code: 201,
+    message: "Article created successfully",
+    data: article,
+    links: {
+      self: `${req.url}/${article.id}`,
+      author: `${req.url}/${article.id}/author`,
+      comment: `${req.url}/${article.id}/comments`,
+    },
+  };
+  res.status(201).json(response);
 });
 
 app.put("/api/v1/articles", (req, res) => {
@@ -93,6 +130,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(4000, () => {
-  console.log("Server is listening on 4000");
-});
+(async () => {
+  await databaseConnection.connect();
+  console.log("Database Connected");
+
+  app.listen(4000, () => {
+    console.log("Server is listening on 4000");
+  });
+})();
