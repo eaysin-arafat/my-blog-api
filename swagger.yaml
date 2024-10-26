@@ -239,7 +239,7 @@ paths:
           $ref: "#/components/responses/401"
         "500":
           $ref: "#/components/responses/500"
-  "/aritcles/{id}":
+  "/articles/{id}":
     get:
       tags: [Article]
       description: Fetch a single article
@@ -687,6 +687,5 @@ components:
       required: true
       description: Article ID
       schema:
-        type: integer
-        format: int32
-        example: 1
+        type: string
+        example: "671b78075b993d21a4c387c7"
