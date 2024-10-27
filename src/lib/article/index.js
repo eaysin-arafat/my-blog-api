@@ -1,5 +1,6 @@
 const { Article } = require("../../model");
 const { notFound } = require("../../utils/error");
+const updateArticleV2 = require("./update-article-v2");
 const defaults = require("../../config/defaults");
 /**
  * Find all articles
@@ -197,4 +198,5 @@ module.exports = {
   updateOrCreate,
   updateProperties,
   removeItem,
+  updateArticleV2,
 };
